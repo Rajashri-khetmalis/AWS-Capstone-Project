@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Donor Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<div class="dashboard-container">
+
+    <h1 class="welcome-text">
+        Welcome, {{ username }} 🩸
+    </h1>
+
+    <!-- 🔴 EXISTING SEARCH CARD (UNCHANGED) -->
+    <div class="search-card">
+        <h2>Search Blood Requests</h2>
+        
+        <form method="POST" action="{{ url_for('search_blood') }}">
+            <select name="blood_group" required>
+                <option value="">Select Blood Group</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option>
+                <option>AB+</option><option>AB-</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- 🟢 NEW FEATURE: PENDING BLOOD REQUESTS -->
+    <h2 style="margin-top:50px;">Pending Blood Requests</h2>
+
+   {% for r in requests %}
+    {% if r.status == "Pending" %}
+    <div class="result-card">
+        <p><strong>🏥 Hospital:</strong> {{ r.hospital }}</p>
+        <p><strong>🩸 Blood Group:</strong> {{ r.blood_group }}</p>
+        <p><strong>📦 Units:</strong> {{ r.units }}</p>
+
+        <form method="post" action="{{ url_for('donor_accept', req_id=loop.index0) }}">
+            <button type="submit" class="btn accept">
+                ❤️ I Can Donate
+            </button>
+        </form>
+    </div>
+    {% endif %}
+{% else %}
+<p>No pending requests available.</p>
+{% endfor %}
+
+</div>
+{% include "footer.html" %}
+
+</body>
+</html>

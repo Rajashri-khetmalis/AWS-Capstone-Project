@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Blood Requests</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<div class="page-container">
+    <div class="card">
+        <h2>Blood Requests for {{ blood_group }}</h2>
+
+        {% for r in requests %}
+            <div class="result-card">
+                <p><strong>🏥 Hospital:</strong> {{ r.hospital }}</p>
+                <p><strong>🩸 Units:</strong> {{ r.units }}</p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span class="status {{ r.status|lower }}">
+                        {{ r.status }}
+                    </span>
+                </p>
+            </div>
+        {% else %}
+            <p>No requests available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% include "footer.html" %}
+
+</body>
+</html>

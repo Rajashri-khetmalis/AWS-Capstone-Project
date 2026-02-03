@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>About | BloodBridge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<!-- HERO SECTION -->
+<section class="hero about-hero">
+    <h1>Connecting Blood Donors & Hospitals</h1>
+    <p>Fast • Reliable • Life Saving</p>
+</section>
+
+<!-- ABOUT CONTENT -->
+<section class="container about-container">
+    <h2>About the Project</h2>
+
+    <p>
+        <b>BloodBridge</b> is a cloud-enabled Blood Bank Management System
+        designed to minimize delays during emergency blood requirements.
+        It digitally connects donors, hospitals, and administrators
+        through a single secure platform.
+    </p>
+
+    <p>
+        This project is developed as part of an <b>AWS Capstone Project</b>,
+        focusing on scalability, reliability, and real-world healthcare impact.
+    </p>
+
+    <!-- IMAGE -->
+    <img src="{{ url_for('static', filename='logo.png') }}"
+         class="about-image">
+
+    <!-- MODULES -->
+    <div class="about-modules">
+        <div class="about-card">
+            <h3>🩸 Donor Module</h3>
+            <p>
+                Allows donors to register, manage profiles,
+                and respond to blood requests easily.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h3>🏥 Hospital Module</h3>
+            <p>
+                Hospitals can request blood units,
+                track donor responses, and manage emergencies.
+            </p>
+        </div>
+
+        <div class="about-card">
+            <h3>🛡️ Admin Module</h3>
+            <p>
+                Admin monitors users, requests, approvals,
+                and ensures smooth system operation.
+            </p>
+        </div>
+    </div>
+</section>
+
+{% include "footer.html" %}
+
+</body>
+</html>

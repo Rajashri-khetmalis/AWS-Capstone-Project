@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Services | BloodBridge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<!-- HERO -->
+<section class="hero services-hero">
+    <h1>Our Services</h1>
+    <p>Smart • Secure • Life Saving</p>
+</section>
+
+<!-- SERVICES -->
+<section class="container services-container">
+
+    <div class="services-grid">
+
+        <div class="service-card">
+            <h3>🩸 Donor Registration</h3>
+            <p>
+                Donors can easily register, manage profiles,
+                and make themselves available during emergencies.
+            </p>
+        </div>
+
+        <div class="service-card">
+            <h3>🔍 Blood Search</h3>
+            <p>
+                Hospitals can search donors based on blood group
+                to meet urgent blood requirements.
+            </p>
+        </div>
+
+        <div class="service-card">
+            <h3>🏥 Hospital Requests</h3>
+            <p>
+                Hospitals can raise blood requests
+                and track request approval status.
+            </p>
+        </div>
+
+        <div class="service-card">
+            <h3>📊 Admin Analytics</h3>
+            <p>
+                Admin dashboard provides insights
+                into donors, hospitals, and blood demand trends.
+            </p>
+        </div>
+
+        <div class="service-card">
+            <h3>🔔 Emergency Notifications</h3>
+            <p>
+                Automated alerts notify donors
+                during critical blood shortages.
+            </p>
+        </div>
+
+        <div class="service-card">
+            <h3>🔐 Secure Access</h3>
+            <p>
+                Role-based login ensures
+                data integrity and user security.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+{% include "footer.html" %}
+
+</body>
+</html>

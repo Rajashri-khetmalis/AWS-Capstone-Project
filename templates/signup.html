@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Signup</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='auth.js') }}"></script>
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<div class="form-container">
+    <h2>Signup</h2>
+
+    <form method="post" onsubmit="return validateSignup()">
+
+<input type="text" name="username" placeholder="Username" required>
+
+<input type="email" id="email" name="email" placeholder="Email" required>
+
+<div style="position:relative;">
+    <input type="password" id="password" name="password" placeholder="Password" required>
+    <span onclick="togglePassword('password', this)" class="eye">👁️</span>
+</div>
+
+
+<select name="role" required>
+    <option value="">Select Role</option>
+    <option value="donor">🩸 Donor</option>
+    <option value="hospital">🏥 Hospital</option>
+    <option value="admin">🛡️ Admin</option>
+</select>
+
+<p id="error" class="error"></p>
+
+
+<button type="submit">Create Account</button>
+
+<p class="switch">
+    Already have an account?
+    <a href="{{ url_for('login') }}">Login</a>
+</p>
+</form>
+
+<script src="{{ url_for('static', filename='auth.js') }}"></script>
+
+
+
+</div>
+   {% include "footer.html" %}
+
+</body>
+</html>

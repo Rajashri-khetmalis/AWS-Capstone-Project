@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>BloodBridge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<!-- HERO IMAGE SECTION -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-image">
+      <img src="/static/images/hero.jpg" alt="Blood Donation">
+    </div>
+
+    <div class="hero-text">
+      <h1>Welcome to BloodBridge</h1>
+      <p>Where Every Drop Becomes a Lifeline 🩸</p>
+
+      <div class="hero-buttons">
+        <a href="/signup" class="btn-primary">Donate Blood</a>
+      
+
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="features-row">
+    <!-- your existing service cards -->
+
+
+    <div class="cards">
+    <div class="card">
+         <h3>Donate Blood</h3>
+        <p>Become a lifesaver by donating blood</p>
+    </div>
+
+    <div class="card">
+         <h3>Hospital Requests</h3>
+        <p>Hospitals can request blood instantly</p>
+    </div>
+
+    <div class="card">
+         <h3>Emergency Support</h3>
+        <p>Quick response during critical situations</p>
+    </div>
+</div>
+</div>
+
+    
+</div>
+
+
+<div class="info-section">
+    <div class="info-text">
+        <h2>Why BloodBridge?</h2>
+        <p>
+            BloodBridge is a cloud-based blood bank management system designed
+            to connect donors and hospitals instantly during emergencies.
+        </p>
+        <p>
+            Using secure authentication and scalable AWS infrastructure,
+            the platform ensures reliable and fast blood availability.
+        </p>
+    </div>
+
+    <img src="{{ url_for('static', filename='blood1.jpg') }}">
+</div>
+
+
+
+<section class="image-info-section">
+   
+    <div class="info-card">
+        <img src="{{ url_for('static', filename='images/donate.jpg') }}">
+        <div class="overlay-text">Donate Blood. Save Lives.</div>
+    </div>
+
+    <div class="info-card">
+        <img src="{{ url_for('static', filename='images/hospital.jpg') }}">
+        <div class="overlay-text">Instant Hospital Requests</div>
+    </div>
+
+    <div class="info-card">
+        <img src="{{ url_for('static', filename='images/emergency.jpg') }}">
+        <div class="overlay-text">Fast Emergency Response</div>
+    </div>
+</section>
+
+        {% include "footer.html" %}
+
+</body>
+</html>

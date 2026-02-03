@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Hospital Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<div class="dashboard-container">
+
+    <h1 class="welcome-text">
+        Welcome, {{ username }} 🏥
+    </h1>
+
+    <div class="search-card">
+        <h2>Request Blood</h2>
+
+        <form method="POST" action="{{ url_for('request_blood') }}">
+
+            <select name="blood_group" required>
+                <option value="">Select Blood Group</option>
+                <option>A+</option><option>A-</option>
+                <option>B+</option><option>B-</option>
+                <option>O+</option><option>O-</option>
+                <option>AB+</option><option>AB-</option>
+            </select>
+            
+            <input type="number" name="units" placeholder="Units Required" min="1" required>
+
+            <button type="submit">Submit Request</button>
+        </form>
+
+
+
+        <h2 style="margin-top:40px;">🩸 Available Blood Stock</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Blood Group</th>
+        <th>Units</th>
+    </tr>
+
+    {% for bg, units in inventory.items() %}
+    <tr>
+        <td>{{ bg }}</td>
+        <td>{{ units }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+   <h2 style="margin-top:40px;">Your Blood Requests</h2>
+
+{% for r in requests %}
+<div class="result-card">
+    <p><strong>🩸 Blood Group:</strong> {{ r.blood_group }}</p>
+    <p><strong>📦 Units:</strong> {{ r.units }}</p>
+    <p><strong>Status:</strong> {{ r.status }}</p>
+
+    {% if r.donor %}
+    <p><strong>🧑 Donor:</strong> {{ r.donor }}</p>
+    {% endif %}
+</div>
+{% else %}
+<p>No blood requests yet.</p>
+{% endfor %}
+
+    </div>
+
+</div>
+     {% include "footer.html" %}
+
+</body>
+</html>

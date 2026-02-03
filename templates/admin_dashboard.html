@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+{% include "navbar.html" %}
+
+<div class="dashboard-container">
+
+    <div class="dashboard-container">
+        <h1 class="welcome-text">Admin Dashboard 📊</h1>
+
+        <div class="cards">
+            <div class="card">👥 Donors<br><strong>{{ donors }}</strong></div>
+            <div class="card">🏥 Hospitals<br><strong>{{ hospitals }}</strong></div>
+            <div class="card">🩸 Total Requests<br><strong>{{ total_requests }}</strong></div>
+            <div class="card">✅ Accepted<br><strong>{{ accepted_requests }}</strong></div>
+            <div class="card">⏳ Pending<br><strong>{{ pending_requests }}</strong></div>
+        </div>
+
+        <h2 style="margin-top:40px;">All Blood Requests</h2>
+
+        {% for r in requests %}
+        <div class="result-card">
+            <p><strong>🏥 Hospital:</strong> {{ r.hospital }}</p>
+            <p><strong>🩸 Blood Group:</strong> {{ r.blood_group }}</p>
+            <p><strong>📦 Units:</strong> {{ r.units }}</p>
+             
+            {% if r.donor %}
+             <p><strong> Donor:</strong> {{ r.donor }}</p>
+            {% endif %}
+
+
+            {% if r.status == "Pending" %}
+              <a href="{{ url_for('update_request', index=loop.index0, action='accept') }}"
+                class="btn accept">✅ Accept</a>
+
+              <a href="{{ url_for('update_request', index=loop.index0, action='reject') }}"
+                class="btn reject">❌ Reject</a>
+            {% endif %}
+
+
+            <p>
+                <strong>Status:</strong>
+                <span class="status {{ r.status|lower }}">
+                    {{ r.status }}
+                </span>
+            </p>
+
+            
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="card-container">
+        <div class="card">
+            <h3>Total Donors</h3>
+            <p>{{ donors }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Hospitals</h3>
+            <p>{{ hospitals }}</p>
+        </div>
+
+        <div class="card">
+            <h3>Total Requests</h3>
+            <p>{{ total_requests }}</p>
+        </div>
+    </div>
+
+    <!-- DONORS -->
+    <h3>🩸 Donors</h3>
+    <ul>
+        <li>Total Registered Donors: {{ donors }}</li>
+    </ul>
+
+    <!-- HOSPITALS -->
+    <h3>🏥 Hospitals</h3>
+    <ul>
+        <li>Total Registered Hospitals: {{ hospitals }}</li>
+    </ul>
+
+    <!-- BLOOD REQUESTS -->
+    <h3>📦 Blood Requests</h3>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Hospital</th>
+            <th>Blood Group</th>
+            <th>Units</th>
+        </tr>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req.hospital }}</td>
+            <td>{{ req.blood_group }}</td>
+            <td>{{ req.units }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No requests</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+    <h2 style="margin-top:40px;">🩸 Blood Inventory</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Blood Group</th>
+        <th>Units Available</th>
+    </tr>
+
+    {% for bg, units in inventory.items() %}
+    <tr>
+        <td>{{ bg }}</td>
+        <td>{{ units }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+</div>
+    {% include "footer.html" %}
+
+</body>
+</html>
