@@ -56,40 +56,30 @@ The system enables **Donors**, **Hospitals**, and **Admins** to interact efficie
 ---
 
 ##  Project Structure
-
-
 BLOOD_BRIDGE/
 │
-├── app.py                 # Local version (in-memory / SQLite storage)
-├── app_aws.py             # AWS production version (DynamoDB + SNS)
+├── app.py # Local version (in-memory storage)
+├── app_aws.py # AWS production version (DynamoDB + SNS)
+├── test_app_aws.py # Local testing using mocked AWS services
 ├── requirements.txt
 ├── README.md
 │
-├── static/
-│   ├── style.css          # Main styling file
-│   ├── auth.js            # Authentication related JS
-│   ├── blood1.jpg
-│   ├── logo.png
-│   └── images/            # Additional images
-│
 ├── templates/
-│   ├── index.html
-│   ├── home.html
-│   ├── about.html
-│   ├── services.html
-│   ├── login.html
-│   ├── signup.html
-│   ├── admin_dashboard.html
-│   ├── donor_dashboard.html
-│   ├── hospital_dashboard.html
-│   ├── blood_requests.html
-│   ├── navbar.html
-│   └── footer.html
+│ ├── index.html
+│ ├── login.html
+│ ├── signup.html
+│ ├── donor_dashboard.html
+│ ├── hospital_dashboard.html
+│ ├── admin_dashboard.html
+│ ├── navbar.html
+│ └── footer.html
 │
-└── screenshots/           # Optional (UI screenshots for GitHub)
+├── static/
+│ ├── style.css
+│ └── images/
+│
+└── screenshots/ # Optional (UI screenshots for GitHub)
 
-
----
 
 ##  Installation
 
