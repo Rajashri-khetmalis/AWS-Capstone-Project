@@ -55,12 +55,14 @@ The system enables **Donors**, **Hospitals**, and **Admins** to interact efficie
 
 ---
 
-##  Project Structure
-app.py: Simple local version (in-memory storage).
-app_aws.py: Main application for AWS deployment (DynamoDB/SNS).
-test_app_aws.py: Script to run app_aws.py locally with mocked AWS services.
-templates/: HTML templates.
-static/: CSS and static assets.
+## 📁 Project Structure
+
+- **app.py** – Simple local version (in-memory storage)
+- **app_aws.py** – Main application for AWS deployment (DynamoDB + SNS)
+- **test_app_aws.py** – Run `app_aws.py` locally using mocked AWS services
+- **templates/** – HTML templates
+- **static/** – CSS and static assets
+
 
 ##  Installation
 
