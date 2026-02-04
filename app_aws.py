@@ -12,14 +12,14 @@ REGION = "us-east-1"
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
 sns = boto3.client("sns", region_name=REGION)
 
-SNS_TOPIC_ARN = "aarn:aws:sns:us-east-1:343218180150:Bloodbridger"
+SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:343218180150:Bloodbridger"
 
 # ---------------- TABLES ----------------
-users_table = dynamodb.Table("Users")          # Donors
-hospitals_table = dynamodb.Table("Hospitals")
-admins_table = dynamodb.Table("Admins")
-requests_table = dynamodb.Table("BloodRequests")
-inventory_table = dynamodb.Table("BloodInventory")
+users_table = dynamodb.Table("Users")          # PK: username
+hospitals_table = dynamodb.Table("Hospitals")  # PK: username
+admins_table = dynamodb.Table("Admins")        # PK: username
+requests_table = dynamodb.Table("BloodRequests")   # PK: request_id
+inventory_table = dynamodb.Table("BloodInventory") # PK: blood_group
 
 # ---------------- SNS ----------------
 def send_notification(subject, message):
@@ -32,13 +32,12 @@ def send_notification(subject, message):
     except ClientError as e:
         print("SNS Error:", e)
 
-# ---------------- COMMON ----------------
+# ================== HOME ==================
 @app.route("/")
 def index():
     return render_template("index.html")
 
 # ================== AUTH ==================
-
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -48,7 +47,8 @@ def signup():
 
         table = users_table if role == "donor" else hospitals_table
 
-        if "Item" in table.get_item(Key={"username": username}):
+        res = table.get_item(Key={"username": username})
+        if res.get("Item"):
             flash("User already exists")
             return redirect(url_for("signup"))
 
@@ -70,15 +70,28 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        table = users_table if role == "donor" else hospitals_table
+        if role == "admin":
+            table = admins_table
+        elif role == "donor":
+            table = users_table
+        else:
+            table = hospitals_table
 
         res = table.get_item(Key={"username": username})
-        if "Item" in res and res["Item"]["password"] == password:
+        if res.get("Item") and res["Item"]["password"] == password:
+            session.clear()
             session["username"] = username
             session["role"] = role
-            return redirect(url_for(f"{role}_dashboard"))
+
+            if role == "admin":
+                return redirect(url_for("admin_dashboard"))
+            elif role == "donor":
+                return redirect(url_for("donor_dashboard"))
+            else:
+                return redirect(url_for("hospital_dashboard"))
 
         flash("Invalid Credentials")
+
     return render_template("login.html")
 
 @app.route("/logout")
@@ -87,23 +100,32 @@ def logout():
     return redirect(url_for("index"))
 
 # ================== DONOR ==================
-
 @app.route("/donor/dashboard")
 def donor_dashboard():
     if session.get("role") != "donor":
         return redirect(url_for("login"))
 
     requests = requests_table.scan().get("Items", [])
-    return render_template("donor_dashboard.html", requests=requests)
+    return render_template(
+        "donor_dashboard.html",
+        username=session["username"],
+        requests=requests
+    )
 
 @app.route("/donor/accept/<req_id>", methods=["POST"])
 def donor_accept(req_id):
-    username = session["username"]
+    if session.get("role") != "donor":
+        return redirect(url_for("login"))
 
-    req = requests_table.get_item(Key={"request_id": req_id})["Item"]
+    username = session["username"]
+    req = requests_table.get_item(Key={"request_id": req_id}).get("Item")
+
+    if not req:
+        flash("Request not found")
+        return redirect(url_for("donor_dashboard"))
+
     bg = req["blood_group"]
 
-    # Update request
     requests_table.update_item(
         Key={"request_id": req_id},
         UpdateExpression="SET #s=:s, donor=:d",
@@ -111,20 +133,18 @@ def donor_accept(req_id):
         ExpressionAttributeValues={":s": "Accepted", ":d": username}
     )
 
-    # Increase inventory
-    inv = inventory_table.get_item(Key={"blood_group": bg})
-    units = inv.get("Item", {}).get("units", 0) + req["units"]
+    inv = inventory_table.get_item(Key={"blood_group": bg}).get("Item")
+    current_units = inv["units"] if inv else 0
 
     inventory_table.put_item(Item={
         "blood_group": bg,
-        "units": units
+        "units": current_units + int(req["units"])
     })
 
     send_notification("Donation Accepted", f"{username} accepted request {req_id}")
     return redirect(url_for("donor_dashboard"))
 
 # ================== HOSPITAL ==================
-
 @app.route("/hospital/dashboard")
 def hospital_dashboard():
     if session.get("role") != "hospital":
@@ -132,10 +152,18 @@ def hospital_dashboard():
 
     username = session["username"]
     requests = requests_table.scan().get("Items", [])
-    return render_template("hospital_dashboard.html", requests=requests, username=username)
+
+    return render_template(
+        "hospital_dashboard.html",
+        username=username,
+        requests=requests
+    )
 
 @app.route("/request_blood", methods=["POST"])
 def request_blood():
+    if session.get("role") != "hospital":
+        return redirect(url_for("login"))
+
     request_id = str(uuid.uuid4())
 
     requests_table.put_item(Item={
@@ -147,46 +175,27 @@ def request_blood():
         "donor": ""
     })
 
-    send_notification("Blood Request", f"New blood request from hospital")
+    send_notification("Blood Request", "New blood request created")
     return redirect(url_for("hospital_dashboard"))
 
 # ================== ADMIN ==================
-
-@app.route("/admin/login", methods=["GET", "POST"])
-def admin_login():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        res = admins_table.get_item(Key={"username": username})
-        if "Item" in res and res["Item"]["password"] == password:
-            session["admin"] = username
-            return redirect(url_for("admin_dashboard"))
-
-    return render_template("admin_login.html")
-
 @app.route("/admin/dashboard")
 def admin_dashboard():
-    if "admin" not in session:
-        return redirect(url_for("admin_login"))
+    if session.get("role") != "admin":
+        return redirect(url_for("login"))
 
-    donors = len(users_table.scan().get("Items", []))
-    hospitals = len(hospitals_table.scan().get("Items", []))
+    donors = users_table.scan().get("Items", [])
+    hospitals = hospitals_table.scan().get("Items", [])
     requests = requests_table.scan().get("Items", [])
     inventory = inventory_table.scan().get("Items", [])
 
     return render_template(
         "admin_dashboard.html",
-        donors=donors,
-        hospitals=hospitals,
+        donors=len(donors),
+        hospitals=len(hospitals),
         requests=requests,
-        inventory=inventory
+        inventory={i["blood_group"]: i["units"] for i in inventory}
     )
-
-@app.route("/admin/logout")
-def admin_logout():
-    session.pop("admin", None)
-    return redirect(url_for("index"))
 
 # ================== RUN ==================
 if __name__ == "__main__":
