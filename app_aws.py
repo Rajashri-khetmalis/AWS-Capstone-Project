@@ -12,7 +12,7 @@ REGION = "us-east-1"
 dynamodb = boto3.resource("dynamodb", region_name=REGION)
 sns = boto3.client("sns", region_name=REGION)
 
-SNS_TOPIC_ARN = "arn:aws:sns:us-east-1:604665149129:aws_capstone_topic"
+SNS_TOPIC_ARN = "aarn:aws:sns:us-east-1:343218180150:Bloodbridger"
 
 # ---------------- TABLES ----------------
 users_table = dynamodb.Table("Users")          # Donors
