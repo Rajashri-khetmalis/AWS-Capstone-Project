@@ -33,10 +33,32 @@ def send_notification(subject, message):
         print("SNS Error:", e)
 
 # ================== HOME ==================
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route('/')
+def home():
+    return render_template('home.html')
 
+
+@app.route('/index')
+def index():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('home.html', username=session['username'])
+
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+@app.route('/services')
+def services():
+    return render_template('services.html')
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 # ================== AUTH ==================
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
@@ -94,10 +116,7 @@ def login():
 
     return render_template("login.html")
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
+
 
 # ================== DONOR ==================
 @app.route("/donor/dashboard")
@@ -158,7 +177,6 @@ def hospital_dashboard():
         username=username,
         requests=requests
     )
-
 @app.route("/request_blood", methods=["POST"])
 def request_blood():
     if session.get("role") != "hospital":
@@ -174,7 +192,6 @@ def request_blood():
         "status": "Pending",
         "donor": ""
     })
-
     send_notification("Blood Request", "New blood request created")
     return redirect(url_for("hospital_dashboard"))
 

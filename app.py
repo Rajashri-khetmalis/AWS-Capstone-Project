@@ -81,32 +81,33 @@ def login():
 # -----------------------------
 # SIGNUP
 # -----------------------------
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        role = request.form['role']
+    if request.method == "POST":
+        role = request.form["role"]
+        username = request.form["username"]
+        password = request.form["password"]
 
-        # check if user already exists
-        for user in users:
-            if user['username'] == username:
+        # Check if user exists
+        for u in users:
+            if u["username"] == username and u["role"] == role:
                 return "User already exists ❌"
 
-        user = {
+        # Save user
+        users.append({
             "username": username,
             "password": password,
             "role": role
-        }
+        })
 
-        users.append(user)
+        if role == "donor":
+            donors.append(username)
+        elif role == "hospital":
+            hospitals.append(username)
 
-        session['username'] = username
-        session['role'] = role
+        return redirect(url_for("login"))
 
-        return redirect(url_for("dashboard"))
-
-    return render_template('signup.html')
+    return render_template("signup.html")
 
 # -----------------------------
 # DONOR MODULE
@@ -151,23 +152,20 @@ def admin_dashboard():
     if session.get("role") != "admin":
         return redirect(url_for("login"))
 
-    donor_count = len([u for u in users if u["role"] == "donor"])
-    hospital_count = len([u for u in users if u["role"] == "hospital"])
-
     total_requests = len(blood_requests)
     accepted_requests = len([r for r in blood_requests if r["status"] == "Accepted"])
     pending_requests = len([r for r in blood_requests if r["status"] == "Pending"])
 
     return render_template(
-    "admin_dashboard.html",
-    donors=len(donors),
-    hospitals=len(hospitals),
-    requests=blood_requests,
-    total_requests=total_requests,
-    accepted_requests=accepted_requests,
-    pending_requests=pending_requests,
-    inventory=blood_inventory
-)
+        "admin_dashboard.html",
+        donors=len(donors),
+        hospitals=len(hospitals),
+        requests=blood_requests,
+        total_requests=total_requests,
+        accepted_requests=accepted_requests,
+        pending_requests=pending_requests,
+        inventory=blood_inventory
+    )
 
 
 
@@ -202,7 +200,8 @@ def donor_accept(req_id):
         return redirect(url_for("login"))
 
     if req_id < len(blood_requests):
-       blood_requests[req_id]["status"] = "Donor Accepted"
+       blood_requests[req_id]["status"] = "Accepted"
+
        blood_requests[req_id]["donor"] = session["username"]
 
        # 🔥 ADD INVENTORY
