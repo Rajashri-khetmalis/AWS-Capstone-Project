@@ -33,12 +33,14 @@ def send_notification(subject, message):
         print("SNS Error:", e)
 
 # ================== HOME ==================
+
 @app.route('/')
 def home():
     return render_template('home.html')
 
 
 @app.route('/index')
+
 def index():
     if 'username' not in session:
         return redirect(url_for('login'))
