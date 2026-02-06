@@ -40,17 +40,23 @@ def dashboard():
 # -----------------------------
 # BASIC PAGES
 # -----------------------------
-@app.route("/")
+@app.route('/')
 def home():
-    return render_template("home.html")
+    return render_template('home.html')
 
-@app.route("/about")
+@app.route('/index')
+def index():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('home.html', username=session["username"])
+
+@app.route('/about')
 def about():
-    return render_template("about.html")
-
-@app.route("/services")
+    return render_template('about.html')
+@app.route('/services')
 def services():
-    return render_template("services.html")
+    return render_template('services.html')
+
 
 # -----------------------------
 # LOGIN
