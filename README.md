@@ -1,3 +1,6 @@
+## Project Demo Video  
+[Click here to watch the demo](https://youtu.be/jzvFYIuxXkg)
+
 
 ### AWS CAPSTONE PROJECT
 #  Blood Bank Management System (Flask + AWS)
